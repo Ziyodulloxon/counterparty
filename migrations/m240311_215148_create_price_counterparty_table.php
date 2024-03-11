@@ -3,20 +3,20 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%price}}`.
+ * Handles the creation of table `{{%price_counterparty}}`.
  * Has foreign keys to the tables:
  *
  * - `{{%product}}`
  * - `{{%counterparty}}`
  */
-class m240311_204739_create_price_table extends Migration
+class m240311_215148_create_price_counterparty_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%price}}', [
+        $this->createTable('{{%price_counterparty}}', [
             'id' => $this->primaryKey(),
             'product_id' => $this->integer(10),
             'price_date' => $this->date(),
@@ -26,15 +26,15 @@ class m240311_204739_create_price_table extends Migration
 
         // creates index for column `product_id`
         $this->createIndex(
-            '{{%idx-price-product_id}}',
-            '{{%price}}',
+            '{{%idx-price_counterparty-product_id}}',
+            '{{%price_counterparty}}',
             'product_id'
         );
 
         // add foreign key for table `{{%product}}`
         $this->addForeignKey(
-            '{{%fk-price-product_id}}',
-            '{{%price}}',
+            '{{%fk-price_counterparty-product_id}}',
+            '{{%price_counterparty}}',
             'product_id',
             '{{%product}}',
             'id',
@@ -43,15 +43,15 @@ class m240311_204739_create_price_table extends Migration
 
         // creates index for column `counterparty_id`
         $this->createIndex(
-            '{{%idx-price-counterparty_id}}',
-            '{{%price}}',
+            '{{%idx-price_counterparty-counterparty_id}}',
+            '{{%price_counterparty}}',
             'counterparty_id'
         );
 
         // add foreign key for table `{{%counterparty}}`
         $this->addForeignKey(
-            '{{%fk-price-counterparty_id}}',
-            '{{%price}}',
+            '{{%fk-price_counterparty-counterparty_id}}',
+            '{{%price_counterparty}}',
             'counterparty_id',
             '{{%counterparty}}',
             'id',
@@ -66,28 +66,28 @@ class m240311_204739_create_price_table extends Migration
     {
         // drops foreign key for table `{{%product}}`
         $this->dropForeignKey(
-            '{{%fk-price-product_id}}',
-            '{{%price}}'
+            '{{%fk-price_counterparty-product_id}}',
+            '{{%price_counterparty}}'
         );
 
         // drops index for column `product_id`
         $this->dropIndex(
-            '{{%idx-price-product_id}}',
-            '{{%price}}'
+            '{{%idx-price_counterparty-product_id}}',
+            '{{%price_counterparty}}'
         );
 
         // drops foreign key for table `{{%counterparty}}`
         $this->dropForeignKey(
-            '{{%fk-price-counterparty_id}}',
-            '{{%price}}'
+            '{{%fk-price_counterparty-counterparty_id}}',
+            '{{%price_counterparty}}'
         );
 
         // drops index for column `counterparty_id`
         $this->dropIndex(
-            '{{%idx-price-counterparty_id}}',
-            '{{%price}}'
+            '{{%idx-price_counterparty-counterparty_id}}',
+            '{{%price_counterparty}}'
         );
 
-        $this->dropTable('{{%price}}');
+        $this->dropTable('{{%price_counterparty}}');
     }
 }
