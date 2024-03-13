@@ -1,8 +1,9 @@
 <?php
 
-namespace app\models;
+namespace app\db\models;
 
-use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "counterparty".
@@ -20,15 +21,28 @@ class Counterparty extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'counterparty';
+    }
+
+    public function behaviors(): array
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ]
+            ]
+        ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['name'], 'required'],
@@ -40,7 +54,7 @@ class Counterparty extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -55,7 +69,7 @@ class Counterparty extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getOrders()
+    public function getOrders(): \yii\db\ActiveQuery
     {
         return $this->hasMany(Order::class, ['counterparty_id' => 'id']);
     }
@@ -65,7 +79,7 @@ class Counterparty extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPriceCounterparties()
+    public function getPriceCounterparties(): \yii\db\ActiveQuery
     {
         return $this->hasMany(PriceCounterparty::class, ['counterparty_id' => 'id']);
     }

@@ -2,11 +2,11 @@
 
 namespace app\controllers;
 
-use app\models\Counterparty;
-use app\models\CounterpartySearch;
+use app\db\models\Counterparty;
+use app\db\models\search\CounterpartySearch;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * CounterpartyController implements the CRUD actions for Counterparty model.

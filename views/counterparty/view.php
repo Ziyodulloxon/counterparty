@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\Counterparty $model */
+/** @var \db\models\Counterparty $model */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Counterparties', 'url' => ['index']];
@@ -31,8 +31,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'name',
-            'created_at',
-            'updated_at',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 

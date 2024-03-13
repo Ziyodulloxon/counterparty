@@ -1,13 +1,13 @@
 <?php
 
-use app\models\Counterparty;
-use yii\helpers\Html;
-use yii\helpers\Url;
+use app\db\models\Counterparty;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var app\models\CounterpartySearch $searchModel */
+/** @var \db\models\search\CounterpartySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Counterparties';
@@ -31,13 +31,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'name',
-            'created_at',
-            'updated_at',
+            'created_at:datetime',
+            'updated_at:datetime',
             [
-                'class' => ActionColumn::className(),
+                'class' => ActionColumn::class,
                 'urlCreator' => function ($action, Counterparty $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                }
             ],
         ],
     ]); ?>

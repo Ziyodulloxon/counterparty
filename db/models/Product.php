@@ -1,8 +1,11 @@
 <?php
 
-namespace app\models;
+namespace app\db\models;
 
-use Yii;
+use yii\behaviors\SluggableBehavior;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "product".
@@ -22,15 +25,32 @@ class Product extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'product';
+    }
+
+    public function behaviors(): array
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ]
+            ],
+            [
+                'class' => SluggableBehavior::class,
+                'attribute' => 'name',
+            ]
+        ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['name', 'slug'], 'required'],
@@ -42,7 +62,7 @@ class Product extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -56,9 +76,9 @@ class Product extends \yii\db\ActiveRecord
     /**
      * Gets query for [[OrderProducts]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getOrderProducts()
+    public function getOrderProducts(): ActiveQuery
     {
         return $this->hasMany(OrderProduct::class, ['product_id' => 'id']);
     }
@@ -66,9 +86,9 @@ class Product extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PriceCounterparties]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getPriceCounterparties()
+    public function getPriceCounterparties(): ActiveQuery
     {
         return $this->hasMany(PriceCounterparty::class, ['product_id' => 'id']);
     }
@@ -76,9 +96,9 @@ class Product extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PriceRetails]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getPriceRetails()
+    public function getPriceRetails(): ActiveQuery
     {
         return $this->hasMany(PriceRetail::class, ['product_id' => 'id']);
     }

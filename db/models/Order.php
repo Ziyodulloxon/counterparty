@@ -1,8 +1,10 @@
 <?php
 
-namespace app\models;
+namespace app\db\models;
 
-use Yii;
+use app\db\OrderStatus;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "order".
@@ -16,12 +18,12 @@ use Yii;
  * @property Counterparty $counterparty
  * @property OrderProduct[] $orderProducts
  */
-class Order extends \yii\db\ActiveRecord
+class Order extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'order';
     }
@@ -29,21 +31,27 @@ class Order extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['date_time', 'amount', 'status'], 'required'],
             [['date_time'], 'safe'],
             [['counterparty_id', 'amount'], 'integer'],
-            [['status'], 'string', 'max' => 30],
-            [['counterparty_id'], 'exist', 'skipOnError' => true, 'targetClass' => Counterparty::class, 'targetAttribute' => ['counterparty_id' => 'id']],
+            [['status'], 'in', 'range' => array_map(fn($case) => $case->value, OrderStatus::cases())],
+            [
+                ['counterparty_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Counterparty::class,
+                'targetAttribute' => ['counterparty_id' => 'id']
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -57,9 +65,9 @@ class Order extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Counterparty]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCounterparty()
+    public function getCounterparty(): ActiveQuery
     {
         return $this->hasOne(Counterparty::class, ['id' => 'counterparty_id']);
     }
@@ -67,9 +75,9 @@ class Order extends \yii\db\ActiveRecord
     /**
      * Gets query for [[OrderProducts]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getOrderProducts()
+    public function getOrderProducts(): ActiveQuery
     {
         return $this->hasMany(OrderProduct::class, ['order_id' => 'id']);
     }

@@ -1,8 +1,9 @@
 <?php
 
-namespace app\models;
+namespace app\db\models;
 
-use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "order_product".
@@ -17,12 +18,12 @@ use Yii;
  * @property Order $order
  * @property Product $product
  */
-class OrderProduct extends \yii\db\ActiveRecord
+class OrderProduct extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'order_product';
     }
@@ -30,20 +31,32 @@ class OrderProduct extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['order_id', 'price', 'quantity', 'price_id'], 'required'],
             [['order_id', 'product_id', 'price', 'quantity', 'price_id'], 'integer'],
-            [['order_id'], 'exist', 'skipOnError' => true, 'targetClass' => Order::class, 'targetAttribute' => ['order_id' => 'id']],
-            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
+            [
+                ['order_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Order::class,
+                'targetAttribute' => ['order_id' => 'id']
+            ],
+            [
+                ['product_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Product::class,
+                'targetAttribute' => ['product_id' => 'id']
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -58,9 +71,9 @@ class OrderProduct extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Order]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getOrder()
+    public function getOrder(): ActiveQuery
     {
         return $this->hasOne(Order::class, ['id' => 'order_id']);
     }
@@ -68,9 +81,9 @@ class OrderProduct extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Product]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getProduct()
+    public function getProduct(): ActiveQuery
     {
         return $this->hasOne(Product::class, ['id' => 'product_id']);
     }

@@ -1,13 +1,13 @@
 <?php
 
-use app\models\Order;
-use yii\helpers\Html;
-use yii\helpers\Url;
+use app\db\models\Order;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var app\models\OrderSearch $searchModel */
+/** @var \db\models\search\OrderSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Orders';

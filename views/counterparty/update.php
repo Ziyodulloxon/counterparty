@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Counterparty $model */
+/** @var \db\models\Counterparty $model */
 
 $this->title = 'Update Counterparty: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Counterparties', 'url' => ['index']];

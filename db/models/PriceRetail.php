@@ -1,8 +1,10 @@
 <?php
 
-namespace app\models;
+namespace app\db\models;
 
-use Yii;
+use app\db\PriceInterface;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "price_retail".
@@ -14,12 +16,12 @@ use Yii;
  *
  * @property Product $product
  */
-class PriceRetail extends \yii\db\ActiveRecord
+class PriceRetail extends ActiveRecord implements PriceInterface
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'price_retail';
     }
@@ -27,19 +29,25 @@ class PriceRetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['product_id', 'price'], 'integer'],
             [['price_date'], 'safe'],
-            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
+            [
+                ['product_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Product::class,
+                'targetAttribute' => ['product_id' => 'id']
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -52,10 +60,20 @@ class PriceRetail extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Product]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getProduct()
+    public function getProduct(): ActiveQuery
     {
         return $this->hasOne(Product::class, ['id' => 'product_id']);
+    }
+
+    public function getPrice(): int
+    {
+        return $this->price;
+    }
+
+    public function getProductId(): int
+    {
+        return $this->product_id;
     }
 }

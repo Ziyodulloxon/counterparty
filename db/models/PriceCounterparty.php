@@ -1,8 +1,10 @@
 <?php
 
-namespace app\models;
+namespace app\db\models;
 
-use Yii;
+use app\db\PriceInterface;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "price_counterparty".
@@ -16,12 +18,12 @@ use Yii;
  * @property Counterparty $counterparty
  * @property Product $product
  */
-class PriceCounterparty extends \yii\db\ActiveRecord
+class PriceCounterparty extends ActiveRecord implements PriceInterface
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'price_counterparty';
     }
@@ -29,20 +31,32 @@ class PriceCounterparty extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['product_id', 'price', 'counterparty_id'], 'integer'],
             [['price_date'], 'safe'],
-            [['counterparty_id'], 'exist', 'skipOnError' => true, 'targetClass' => Counterparty::class, 'targetAttribute' => ['counterparty_id' => 'id']],
-            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
+            [
+                ['counterparty_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Counterparty::class,
+                'targetAttribute' => ['counterparty_id' => 'id']
+            ],
+            [
+                ['product_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Product::class,
+                'targetAttribute' => ['product_id' => 'id']
+            ]
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -56,9 +70,9 @@ class PriceCounterparty extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Counterparty]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCounterparty()
+    public function getCounterparty(): ActiveQuery
     {
         return $this->hasOne(Counterparty::class, ['id' => 'counterparty_id']);
     }
@@ -66,10 +80,20 @@ class PriceCounterparty extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Product]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getProduct()
+    public function getProduct(): ActiveQuery
     {
         return $this->hasOne(Product::class, ['id' => 'product_id']);
+    }
+
+    public function getPrice(): int
+    {
+        return $this->price;
+    }
+
+    public function getProductId(): int
+    {
+        return $this->product_id;
     }
 }

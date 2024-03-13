@@ -1,31 +1,31 @@
 <?php
 
-namespace app\models;
+namespace app\db\models\search;
 
+use app\db\models\Product;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Order;
 
 /**
- * OrderSearch represents the model behind the search form of `app\models\Order`.
+ * ProductSearch represents the model behind the search form of `app\models\Product`.
  */
-class OrderSearch extends Order
+class ProductSearch extends Product
 {
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['id', 'counterparty_id', 'amount'], 'integer'],
-            [['date_time', 'status'], 'safe'],
+            [['id', 'created_at', 'updated_at'], 'integer'],
+            [['name', 'slug'], 'safe'],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -38,9 +38,9 @@ class OrderSearch extends Order
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
-        $query = Order::find();
+        $query = Product::find();
 
         // add conditions that should always apply here
 
@@ -59,12 +59,12 @@ class OrderSearch extends Order
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'date_time' => $this->date_time,
-            'counterparty_id' => $this->counterparty_id,
-            'amount' => $this->amount,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'status', $this->status]);
+        $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'slug', $this->slug]);
 
         return $dataProvider;
     }

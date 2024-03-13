@@ -2,27 +2,49 @@
 
 namespace app\modules\order\controllers;
 
-use app\models\Order;
-use app\models\OrderSearch;
+use app\db\factories\OrderFactory;
+use app\db\forms\OrderCreateForm;
+use app\db\forms\OrderItemForm;
+use app\db\models\Order;
+use app\db\models\search\OrderSearch;
+use app\db\repositories\CounterpartyRepository;
+use app\db\repositories\OrderRepository;
+use app\db\repositories\ProductRepository;
+use app\services\OrderService;
+use yii\base\Model;
+use yii\filters\VerbFilter;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * OrderController implements the CRUD actions for Order model.
  */
 class OrderController extends Controller
 {
+    public function __construct(
+        $id,
+        $module,
+        private readonly OrderService $service,
+        private readonly OrderFactory $factory,
+        private readonly ProductRepository $products,
+        private readonly CounterpartyRepository $counterparties,
+        $config = []
+    ) {
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @inheritDoc
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return array_merge(
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -36,7 +58,7 @@ class OrderController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new OrderSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -53,7 +75,7 @@ class OrderController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -63,22 +85,22 @@ class OrderController extends Controller
     /**
      * Creates a new Order model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
-        $model = new Order();
+        $orderForm = new OrderCreateForm();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        if ($orderForm->load($this->request->post()) && $orderForm->validate()) {
+            $order = $this->service->create($orderForm);
+            return $this->redirect(['index']);
         }
 
         return $this->render('create', [
-            'model' => $model,
+            'model' => $orderForm,
+            'counterparties' => $this->counterparties->getAllCounterpartiesName(),
+            'products' => $this->products->getAllProductNames(),
+            'orderItemModels' => [new OrderItemForm()]
         ]);
     }
 
@@ -86,10 +108,10 @@ class OrderController extends Controller
      * Updates an existing Order model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
-     * @return string|\yii\web\Response
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id): Response|string
     {
         $model = $this->findModel($id);
 
@@ -106,10 +128,10 @@ class OrderController extends Controller
      * Deletes an existing Order model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->delete();
 
@@ -123,7 +145,7 @@ class OrderController extends Controller
      * @return Order the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): Order
     {
         if (($model = Order::findOne(['id' => $id])) !== null) {
             return $model;

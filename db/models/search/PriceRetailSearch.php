@@ -1,24 +1,24 @@
 <?php
 
-namespace app\models;
+namespace app\db\models\search;
 
+use app\db\models\PriceRetail;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Counterparty;
 
 /**
- * CounterpartySearch represents the model behind the search form of `app\models\Counterparty`.
+ * PriceRetailSearch represents the model behind the search form of `app\models\PriceRetail`.
  */
-class CounterpartySearch extends Counterparty
+class PriceRetailSearch extends PriceRetail
 {
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['id', 'created_at', 'updated_at'], 'integer'],
-            [['name'], 'safe'],
+            [['id', 'product_id', 'price'], 'integer'],
+            [['price_date'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class CounterpartySearch extends Counterparty
      */
     public function search($params)
     {
-        $query = Counterparty::find();
+        $query = PriceRetail::find();
 
         // add conditions that should always apply here
 
@@ -59,11 +59,10 @@ class CounterpartySearch extends Counterparty
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'product_id' => $this->product_id,
+            'price_date' => $this->price_date,
+            'price' => $this->price,
         ]);
-
-        $query->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }
