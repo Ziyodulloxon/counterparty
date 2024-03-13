@@ -16,7 +16,7 @@ class OrderService
         private readonly OrderRepository $orders
     ) {}
 
-    public function create(OrderCreateForm $form): Order
+    public function create(OrderCreateForm $form): ?Order
     {
         $orderItemsPrices = $this->prices->getOrderItemsPrices($form);
         $order = $this->factory->makeNewOrder($form, $orderItemsPrices);
@@ -27,8 +27,10 @@ class OrderService
             $orderItems = $this->factory->makeOrderItems($order->id, $form->order_items, $orderItemsPrices);
             $this->orders->persistOrderProducts($orderItems);
             $transaction->commit();
+            return $order;
         } catch (\Exception $exception) {
             $transaction->rollBack();
+            throw $exception;
         }
     }
 }
